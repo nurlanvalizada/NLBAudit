@@ -6,7 +6,7 @@ public class AuditingConfiguration
 
     public bool IsEnabledForAnonymousUsers { get; set; } = false;
 
-    public List<Type> IgnoredTypes { get; } = new();
+    public List<Type> IgnoredTypes { get; set; } = new();
 
     public bool SaveReturnValues { get; set; } = false;
 }

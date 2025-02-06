@@ -14,7 +14,7 @@ public static class MappingExtensions
             InputObj = auditInfo.InputObj,
             ReturnValue = auditInfo.ReturnValue,
             CreationTime = auditInfo.CreationTime,
-            Duration = auditInfo.ExecutionDuration,
+            Duration = auditInfo.Duration,
             Exception = auditInfo.Exception?.ToString(),
             CustomData = auditInfo.CustomData,
             BrowserInfo = auditInfo.BrowserInfo,

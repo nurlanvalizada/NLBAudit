@@ -44,7 +44,7 @@ public class MinimalApiEndpointAuditFilter<TUserId>(IAuditingHelper<TUserId> aud
         finally
         {
             stopwatch.Stop();
-            auditInfo.ExecutionDuration = Convert.ToInt32(stopwatch.Elapsed.TotalMilliseconds);
+            auditInfo.Duration = Convert.ToInt32(stopwatch.Elapsed.TotalMilliseconds);
             
             if (result != null)
             {
@@ -69,7 +69,7 @@ public class MinimalApiEndpointAuditFilter<TUserId>(IAuditingHelper<TUserId> aud
             var methodInfo = endpoint.Metadata.OfType<MethodInfo>().FirstOrDefault();
             if(methodInfo is not null)
             {
-                return auditingHelper.ShouldSaveAudit(methodInfo, true);
+                return auditingHelper.ShouldSaveAudit(methodInfo);
             }
         }
         

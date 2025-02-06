@@ -4,7 +4,7 @@ namespace NLBAudit.Core;
 
 public interface IAuditingHelper<TUserId>
 {
-    bool ShouldSaveAudit(MethodInfo methodInfo, bool defaultValue = false);
+    bool ShouldSaveAudit(MethodInfo? methodInfo);
 
     AuditInfo<TUserId> CreateAuditInfo(Type type, MethodInfo method, object[] arguments);
 

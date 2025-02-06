@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace NLBAudit.Core;
 
-public class LogAuditingStore<TUserId>(ILogger<LogAuditingStore<TUserId>> logger) : IAuditingStore<TUserId>
+internal class LogAuditingStore<TUserId>(ILogger<LogAuditingStore<TUserId>> logger) : IAuditingStore<TUserId>
 {
     public Task SaveAsync(AuditInfo<TUserId> auditInfo, CancellationToken cancellationToken)
     {
@@ -12,7 +12,7 @@ public class LogAuditingStore<TUserId>(ILogger<LogAuditingStore<TUserId>> logger
         }
         else
         {
-            logger.LogError(auditInfo.ToString());
+            logger.LogWarning(auditInfo.ToString());
         }
 
         return Task.CompletedTask;

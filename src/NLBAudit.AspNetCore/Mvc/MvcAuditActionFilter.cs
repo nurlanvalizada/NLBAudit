@@ -50,7 +50,7 @@ public class MvcAuditActionFilter<TUserId>(
         finally
         {
             stopwatch.Stop();
-            auditInfo.ExecutionDuration = Convert.ToInt32(stopwatch.Elapsed.TotalMilliseconds);
+            auditInfo.Duration = Convert.ToInt32(stopwatch.Elapsed.TotalMilliseconds);
 
             if (configuration.SaveReturnValues && result != null)
             {
@@ -82,7 +82,7 @@ public class MvcAuditActionFilter<TUserId>(
             
         if(actionContext.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
         {
-            return auditingHelper.ShouldSaveAudit(controllerActionDescriptor.MethodInfo, true);
+            return auditingHelper.ShouldSaveAudit(controllerActionDescriptor.MethodInfo);
         }
         
         return false;

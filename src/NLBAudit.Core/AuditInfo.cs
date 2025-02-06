@@ -3,67 +3,37 @@ namespace NLBAudit.Core;
 public class AuditInfo<TUserId>
 {
     public TUserId? UserId { get; set; }
-
-    /// <summary>
-    /// Service (class/interface) name.
-    /// </summary>
+    
     public string ServiceName { get; set; }
-
-    /// <summary>
-    /// Executed method name.
-    /// </summary>
+    
     public string MethodName { get; set; }
-
-    /// <summary>
-    /// Calling parameters.
-    /// </summary>
+    
     public string? InputObj { get; set; }
-
-    /// <summary>
-    /// Return values.
-    /// </summary>
+    
     public string? ReturnValue { get; set; }
-
-    /// <summary>
-    /// Start time of the method execution.
-    /// </summary>
+    
     public DateTime CreationTime { get; set; }
-
-    /// <summary>
-    /// Total duration of the method call.
-    /// </summary>
-    public int ExecutionDuration { get; set; }
-
-    /// <summary>
-    /// IP address of the client.
-    /// </summary>
+    
+    public int Duration { get; set; }
+    
     public string? ClientIpAddress { get; set; }
-
-    /// <summary>
-    /// Browser information if this method is called in a web request.
-    /// </summary>
+    
     public string? BrowserInfo { get; set; }
-
-    /// <summary>
-    /// Optional custom data that can be filled and used.
-    /// </summary>
+    
     public string? CustomData { get; set; }
-
-    /// <summary>
-    /// Exception object, if an exception occurred during execution of the method.
-    /// </summary>
+    
     public Exception? Exception { get; set; }
 
     public override string ToString()
     {
         var loggedUserId = UserId is not null
-            ? "user " + UserId
+            ? "user: " + UserId
             : "an anonymous user";
 
         var exceptionOrSuccessMessage = Exception != null
             ? "exception: " + Exception.Message
-            : "succeed";
+            : "success";
 
-        return $"AUDIT LOG: {ServiceName}.{MethodName} is executed by {loggedUserId} in {ExecutionDuration} ms from {ClientIpAddress} IP address with {exceptionOrSuccessMessage}.";
+        return $"AUDIT LOG: {ServiceName}.{MethodName} is executed by {loggedUserId} in {Duration} ms from {ClientIpAddress} IP address with {exceptionOrSuccessMessage}.";
     }
 }

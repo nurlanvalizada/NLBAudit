@@ -5,7 +5,7 @@ using NLBAudit.Core.Attributes;
 
 namespace NLBAudit.Core;
 
-internal class AuditingHelper<TUserId>(
+public class AuditingHelper<TUserId>(
     ILogger<AuditingHelper<TUserId>> logger,
     IAuthorizationInfoProvider<TUserId> authorizationInfoProvider,
     IAuditingStore<TUserId> auditingStore,
@@ -13,7 +13,7 @@ internal class AuditingHelper<TUserId>(
     AuditingConfiguration configuration)
     : IAuditingHelper<TUserId>
 {
-    public bool ShouldSaveAudit(MethodInfo? methodInfo, bool defaultValue = false)
+    public bool ShouldSaveAudit(MethodInfo? methodInfo)
     {
         if(!configuration.IsEnabled)
             return false;
@@ -57,7 +57,7 @@ internal class AuditingHelper<TUserId>(
             }
         }
 
-        return defaultValue;
+        return true;
     }
 
     public AuditInfo<TUserId> CreateAuditInfo(Type type, MethodInfo method, object[] arguments)
@@ -67,12 +67,13 @@ internal class AuditingHelper<TUserId>(
 
     public AuditInfo<TUserId> CreateAuditInfo(Type? type, MethodInfo method, IDictionary<string, object?> arguments)
     {
+        var correctedArguments = CorrectArguments(method, arguments);
         var auditInfo = new AuditInfo<TUserId>
         {
             UserId = authorizationInfoProvider.GetUserId(),
             ServiceName = type?.FullName ?? string.Empty,
             MethodName = method.Name,
-            InputObj = ConvertArgumentsToJson(arguments),
+            InputObj = ConvertArgumentsToJson(correctedArguments),
             CreationTime = DateTime.Now,
             ClientIpAddress = callerPartyInfoProvider.ClientIpAddress,
             BrowserInfo = callerPartyInfoProvider.BrowserInfo,
@@ -118,16 +119,34 @@ internal class AuditingHelper<TUserId>(
         }
     }
 
-    private static Dictionary<string, object?> CreateArgumentsDictionary(MethodInfo method, object[] arguments)
+    private static Dictionary<string, object?> CreateArgumentsDictionary(MethodInfo method, object?[] arguments)
     {
-        var parameters = method.GetParameters();
+        var methodParameters = method.GetParameters();
         var dictionary = new Dictionary<string, object?>();
-
-        for(var i = 0; i < parameters.Length; i++)
+        
+        if(methodParameters.Length != arguments.Length)
         {
-            var name = parameters[i].Name;
+            throw new ArgumentException("The number of parameters does not match the number of arguments for the method:" + method.Name);
+        }
+
+        for(var i = 0; i < methodParameters.Length; i++)
+        {
+            var name = methodParameters[i].Name;
             if(name != null) 
                 dictionary[name] = arguments[i];
+        }
+
+        return dictionary;
+    }
+
+    private static Dictionary<string, object?> CorrectArguments(MethodInfo method, IDictionary<string, object?> parameters)
+    {
+        var methodArguments = parameters.Select(p => p.Value).ToArray();
+        var dictionary = CreateArgumentsDictionary(method, methodArguments);
+        
+        if(!dictionary.Keys.SequenceEqual(parameters.Keys))
+        {
+            throw new ArgumentException("The parameter names do not match the method parameters.");
         }
 
         return dictionary;

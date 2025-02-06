@@ -1,6 +1,6 @@
 namespace NLBAudit.Core;
 
-public class TestAuthorizationInfoProvider<TUserId> : IAuthorizationInfoProvider<TUserId>
+internal class TestAuthorizationInfoProvider<TUserId> : IAuthorizationInfoProvider<TUserId>
 {
     public bool IsAuthenticated()
     {
