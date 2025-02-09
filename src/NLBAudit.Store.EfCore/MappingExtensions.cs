@@ -2,7 +2,7 @@ using NLBAudit.Core;
 
 namespace NLBAudit.Store.EfCore;
 
-public static class MappingExtensions
+internal static class MappingExtensions
 {
     public static AuditLogEntity<TUserId> ToAuditLogEntity<TUserId>(this AuditInfo<TUserId> auditInfo)
     {

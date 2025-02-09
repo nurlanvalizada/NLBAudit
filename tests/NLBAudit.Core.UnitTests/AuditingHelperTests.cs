@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using NLBAudit.Core.UnitTests.Setup;
 using NSubstitute;
 
 namespace NLBAudit.Core.UnitTests;
@@ -47,7 +48,7 @@ public class AuditingHelperTests
         // Arrange
         _configuration.IsEnabled = false;
         var helper = CreateHelper();
-        var method = typeof(TestMethods).GetMethod(nameof(TestMethods.NoAttributeMethod));
+        var method = typeof(ClassWithVariousMethods).GetMethod(nameof(ClassWithVariousMethods.NoAttributeMethod));
 
         // Act
         var result = helper.ShouldSaveAudit(method);
@@ -63,7 +64,7 @@ public class AuditingHelperTests
         _configuration.IsEnabledForAnonymousUsers = false;
         _authorizationInfoProvider.IsAuthenticated().Returns(false);
         var helper = CreateHelper();
-        var method = typeof(TestMethods).GetMethod(nameof(TestMethods.NoAttributeMethod));
+        var method = typeof(ClassWithVariousMethods).GetMethod(nameof(ClassWithVariousMethods.NoAttributeMethod));
 
         // Act
         var result = helper.ShouldSaveAudit(method);
@@ -90,7 +91,7 @@ public class AuditingHelperTests
     {
         // Arrange
         var helper = CreateHelper();
-        var method = typeof(TestMethods).GetMethod("PrivateMethod", BindingFlags.Instance | BindingFlags.NonPublic);
+        var method = typeof(ClassWithVariousMethods).GetMethod("PrivateMethod", BindingFlags.Instance | BindingFlags.NonPublic);
 
         // Act
         var result = helper.ShouldSaveAudit(method);
@@ -104,7 +105,7 @@ public class AuditingHelperTests
     {
         // Arrange
         var helper = CreateHelper();
-        var method = typeof(TestMethods).GetMethod(nameof(TestMethods.AuditedMethod));
+        var method = typeof(ClassWithVariousMethods).GetMethod(nameof(ClassWithVariousMethods.AuditedMethod));
 
         // Act
         var result = helper.ShouldSaveAudit(method);
@@ -118,7 +119,7 @@ public class AuditingHelperTests
     {
         // Arrange
         var helper = CreateHelper();
-        var method = typeof(TestMethods).GetMethod(nameof(TestMethods.NotAuditedMethod));
+        var method = typeof(ClassWithVariousMethods).GetMethod(nameof(ClassWithVariousMethods.NotAuditedMethod));
 
         // Act
         var result = helper.ShouldSaveAudit(method);
@@ -160,7 +161,7 @@ public class AuditingHelperTests
     {
         // Arrange
         var helper = CreateHelper();
-        var method = typeof(TestMethods).GetMethod(nameof(TestMethods.NoAttributeMethod));
+        var method = typeof(ClassWithVariousMethods).GetMethod(nameof(ClassWithVariousMethods.NoAttributeMethod));
 
         // Act
         var result = helper.ShouldSaveAudit(method);
@@ -181,15 +182,15 @@ public class AuditingHelperTests
         _authorizationInfoProvider.GetUserId().Returns(expectedUserId);
 
         var helper = CreateHelper();
-        var method = typeof(TestMethods).GetMethod(nameof(TestMethods.MethodWithParametersAndReturnValue));
+        var method = typeof(ClassWithVariousMethods).GetMethod(nameof(ClassWithVariousMethods.MethodWithParametersAndReturnValue));
         object[] args = ["value1", 123];
 
         // Act
-        var auditInfo = helper.CreateAuditInfo(typeof(TestMethods), method, args);
+        var auditInfo = helper.CreateAuditInfo(typeof(ClassWithVariousMethods), method, args);
 
         // Assert
         Assert.Equal(expectedUserId, auditInfo.UserId);
-        Assert.Equal(typeof(TestMethods).FullName, (string?)auditInfo.ServiceName);
+        Assert.Equal(typeof(ClassWithVariousMethods).FullName, (string?)auditInfo.ServiceName);
         Assert.Equal(method.Name, (string?)auditInfo.MethodName);
         var deserialized = JsonSerializer.Deserialize<Dictionary<string, object>>(auditInfo.InputObj);
         Assert.NotNull(deserialized);
@@ -207,7 +208,7 @@ public class AuditingHelperTests
         _configuration.IgnoredTypes.Add(typeof(DateTime));
 
         var helper = CreateHelper();
-        var method = typeof(TestMethods).GetMethod(nameof(TestMethods.MethodWithParameters));
+        var method = typeof(ClassWithVariousMethods).GetMethod(nameof(ClassWithVariousMethods.MethodWithParameters));
         var arguments = new Dictionary<string, object?>
         {
             { "value1", "test" },
@@ -215,11 +216,11 @@ public class AuditingHelperTests
         };
 
         // Act
-        var auditInfo = helper.CreateAuditInfo(typeof(TestMethods), method, arguments);
+        var auditInfo = helper.CreateAuditInfo(typeof(ClassWithVariousMethods), method, arguments);
 
         // Assert
         Assert.Equal(expectedUserId, auditInfo.UserId);
-        Assert.Equal(typeof(TestMethods).FullName, (string?)auditInfo.ServiceName);
+        Assert.Equal(typeof(ClassWithVariousMethods).FullName, (string?)auditInfo.ServiceName);
         Assert.Equal(method.Name, (string?)auditInfo.MethodName);
 
         // Deserialize and check that the DateTime parameter was replaced with null.

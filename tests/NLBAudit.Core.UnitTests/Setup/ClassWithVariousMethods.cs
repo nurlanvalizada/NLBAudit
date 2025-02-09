@@ -1,8 +1,8 @@
 using NLBAudit.Core.Attributes;
 
-namespace NLBAudit.Core.UnitTests;
+namespace NLBAudit.Core.UnitTests.Setup;
 
-public class TestMethods
+public class ClassWithVariousMethods
 {
     public void NoAttributeMethod() { }
     
@@ -27,16 +27,4 @@ public class TestMethods
     {
         
     }
-}
-
-[Audited]
-public class ClassWithAudited
-{
-    public void MethodInAuditedClass() { }
-}
-
-[NotAudited]
-public class ClassWithNotAudited
-{
-    public void MethodInNotAuditedClass() { }
 }

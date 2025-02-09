@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
             return conf;
         });
         
-        services.AddScoped<IAuditingStore<TUserId>, LogAuditingStore<TUserId>>();
+        services.AddSingleton<IAuditingStore<TUserId>, LogAuditingStore<TUserId>>();
         services.AddSingleton<ICallerPartyInfoProvider, TestCallerPartyInfoProvider>();
         services.AddSingleton<IAuthorizationInfoProvider<TUserId>, TestAuthorizationInfoProvider<TUserId>>();
         services.AddScoped<IAuditingHelper<TUserId>, AuditingHelper<TUserId>>();
