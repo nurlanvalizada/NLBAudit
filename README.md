@@ -1,8 +1,10 @@
-# NLBAudit Project
+# NLBAudit - Comprehensive and Extensible Auditing Library
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## Overview
 
-NLBAudit is a comprehensive auditing library for .NET applications. It provides functionalities to log and track method executions, including details such as execution time, duration, input parameters, return values, and exceptions. The library is designed to be easily integrated with Entity Framework Core and ASP.NET Core applications.
+NLBAudit is a comprehensive and extensible auditing library for .NET applications. It provides functionalities to log and track method executions, including details such as execution time, duration, input parameters, return values, and exceptions. The library is designed to be easily integrated with Entity Framework Core and ASP.NET Core applications.
 
 ## Features
 
@@ -104,11 +106,10 @@ dotnet add package NLBAudit.Store.EfCore
 This is all you need :) 
 
 ### Customization
-You can customize the audit logging by extending the AuditInfo class or implementing your own storage mechanism by extending IAuditManager.  
+You can customize the audit logging by extending the AuditInfo class or implementing your own storage mechanism by extending IAuditingStore.  
 
 ### Contributing
 Contributions are welcome! Please open an issue or submit a pull request on GitHub.  
 
 ### License
-This project is licensed under the MIT License. See the LICENSE file for details.
-
+This project is licensed under the [MIT LICENSE](LICENSE). You are free to use it in both commercial and open-source software.
