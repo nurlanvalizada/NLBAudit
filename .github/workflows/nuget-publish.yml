@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      NUGET_AUTH_TOKEN: ${{secrets.NUGET_AUTH_TOKEN}}
 
     steps:
       - name: Checkout Repository
@@ -26,13 +26,19 @@ jobs:
         run: dotnet restore
 
       - name: Build and Pack NLBAudit.Core
-        run: dotnet pack ./src/NLBAudit.Core/NLBAudit.Core.csproj --configuration Release --output ./nupkgs
+        run: |
+          dotnet build ./src/NLBAudit.Core/NLBAudit.Core.csproj --configuration Release
+          dotnet pack ./src/NLBAudit.Core/NLBAudit.Core.csproj --configuration Release --output ./nupkgs
 
       - name: Build and Pack Project 2
-        run: dotnet pack ./src/NLBAudit.Store.EfCore/NLBAudit.Store.EfCore.csproj --configuration Release --output ./nupkgs
+        run: |
+          dotnet build ./src/NLBAudit.Store.EfCore/NLBAudit.Store.EfCore.csproj --configuration Release
+          dotnet pack ./src/NLBAudit.Store.EfCore/NLBAudit.Store.EfCore.csproj --configuration Release --output ./nupkgs
 
       - name: Build and Pack Project 3
-        run: dotnet pack ./src/NLBAudit.AspNetCore/NLBAudit.AspNetCore.csproj --configuration Release --output ./nupkgs
+        run: |
+          dotnet build ./src/NLBAudit.AspNetCore/NLBAudit.AspNetCore.csproj --configuration Release
+          dotnet pack ./src/NLBAudit.AspNetCore/NLBAudit.AspNetCore.csproj --configuration Release --output ./nupkgs
 
       - name: Publish NuGet Packages
         run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${{ secrets.NUGET_AUTH_TOKEN }} --source https://api.nuget.org/v3/index.json
