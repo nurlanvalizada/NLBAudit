@@ -186,7 +186,7 @@ public class AuditingHelperTests
         object[] args = ["value1", 123];
 
         // Act
-        var auditInfo = helper.CreateAuditInfo(typeof(ClassWithVariousMethods), method, args);
+        var auditInfo = helper.CreateAuditInfo("/test", "GET", typeof(ClassWithVariousMethods), method, args);
 
         // Assert
         Assert.Equal(expectedUserId, auditInfo.UserId);
@@ -216,7 +216,7 @@ public class AuditingHelperTests
         };
 
         // Act
-        var auditInfo = helper.CreateAuditInfo(typeof(ClassWithVariousMethods), method, arguments);
+        var auditInfo = helper.CreateAuditInfo("/test", "GET", typeof(ClassWithVariousMethods), method, arguments);
 
         // Assert
         Assert.Equal(expectedUserId, auditInfo.UserId);
@@ -242,6 +242,8 @@ public class AuditingHelperTests
         var auditInfo = new AuditInfo<int>
         {
             UserId = 1,
+            Path = "/test",
+            HttpMethod = "GET",
             ServiceName = "TestService",
             MethodName = "TestMethod",
             InputObj = "{}",

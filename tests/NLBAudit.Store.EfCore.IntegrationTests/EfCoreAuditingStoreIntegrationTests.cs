@@ -18,6 +18,8 @@ public class EfCoreAuditingStoreIntegrationTests
             var auditInfo = new AuditInfo<int>
             {
                 UserId = 1,
+                Path = "/test", 
+                HttpMethod = "POST",
                 ServiceName = "TestService",
                 MethodName = "TestMethod",
                 InputObj = "{\"param\":\"value\"}",

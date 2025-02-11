@@ -6,7 +6,11 @@ public class AuditLogEntity<TUserId>
     
     public TUserId? UserId { get; set; }
     
-    public string ServiceName { get; set; }
+    public required string Path { get; set; }
+    
+    public required string HttpMethod { get; set; }
+    
+    public required string ServiceName { get; set; }
     
     public string MethodName { get; set; }
     
@@ -21,8 +25,6 @@ public class AuditLogEntity<TUserId>
     public string? ClientIpAddress { get; set; }
     
     public string? BrowserInfo { get; set; }
-    
-    public string? CustomData { get; set; }
     
     public string? Exception { get; set; }
 }

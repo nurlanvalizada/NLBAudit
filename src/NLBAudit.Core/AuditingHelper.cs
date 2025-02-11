@@ -13,7 +13,7 @@ public class AuditingHelper<TUserId>(
     AuditingConfiguration configuration)
     : IAuditingHelper<TUserId>
 {
-    public bool ShouldSaveAudit(MethodInfo? methodInfo)
+    public bool ShouldSaveAudit(MethodInfo? methodInfo, bool allowInternalMethods = false)
     {
         if(!configuration.IsEnabled)
             return false;
@@ -28,7 +28,7 @@ public class AuditingHelper<TUserId>(
             return false;
         }
 
-        if(!methodInfo.IsPublic)
+        if(!methodInfo.IsPublic && !allowInternalMethods)
         {
             return false;
         }
@@ -60,18 +60,20 @@ public class AuditingHelper<TUserId>(
         return true;
     }
 
-    public AuditInfo<TUserId> CreateAuditInfo(Type type, MethodInfo method, object[] arguments)
+    public AuditInfo<TUserId> CreateAuditInfo(string path, string httpMethod, Type type, MethodInfo method, object[] arguments)
     {
-        return CreateAuditInfo(type, method, CreateArgumentsDictionary(method, arguments));
+        return CreateAuditInfo(path, httpMethod, type, method, CreateArgumentsDictionary(method, arguments));
     }
 
-    public AuditInfo<TUserId> CreateAuditInfo(Type? type, MethodInfo method, IDictionary<string, object?> arguments)
+    public AuditInfo<TUserId> CreateAuditInfo(string path, string httpMethod, Type type, MethodInfo method, IDictionary<string, object?> arguments)
     {
         var correctedArguments = CorrectArguments(method, arguments);
         var auditInfo = new AuditInfo<TUserId>
         {
             UserId = authorizationInfoProvider.GetUserId(),
-            ServiceName = type?.FullName ?? string.Empty,
+            Path = path,
+            HttpMethod = httpMethod,
+            ServiceName = type.FullName ?? type.Name,
             MethodName = method.Name,
             InputObj = ConvertArgumentsToJson(correctedArguments),
             CreationTime = DateTime.Now,

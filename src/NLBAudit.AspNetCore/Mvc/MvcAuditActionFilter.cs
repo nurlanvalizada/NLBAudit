@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using NLBAudit.AspNetCore.Extensions;
 using NLBAudit.Core;
 
 namespace NLBAudit.AspNetCore.Mvc;
@@ -27,6 +28,8 @@ public class MvcAuditActionFilter<TUserId>(
         }
 
         var auditInfo = auditingHelper.CreateAuditInfo(
+            context.HttpContext.GetFullUrl(),
+            context.HttpContext.Request.Method,
             controllerActionDescriptor.ControllerTypeInfo.AsType(),
             controllerActionDescriptor.MethodInfo,
             context.ActionArguments
@@ -34,7 +37,7 @@ public class MvcAuditActionFilter<TUserId>(
 
         var stopwatch = Stopwatch.StartNew();
 
-        ActionExecutedContext result = null;
+        ActionExecutedContext? result = null;
         try
         {
             result = await next();
@@ -61,7 +64,7 @@ public class MvcAuditActionFilter<TUserId>(
                         break;
 
                     case JsonResult jsonResult:
-                        auditInfo.ReturnValue = JsonSerializer.Serialize(jsonResult.Value);
+                        auditInfo.ReturnValue = JsonSerializer.Serialize(jsonResult.Value ?? new { });
                         break;
 
                     case ContentResult contentResult:
@@ -77,14 +80,7 @@ public class MvcAuditActionFilter<TUserId>(
 
     private bool ShouldSaveAudit(ActionExecutingContext actionContext)
     {
-        if(!configuration.IsEnabled)
-            return false;
-            
-        if(actionContext.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
-        {
-            return auditingHelper.ShouldSaveAudit(controllerActionDescriptor.MethodInfo);
-        }
-        
-        return false;
+        var controllerActionDescriptor = actionContext.ActionDescriptor as ControllerActionDescriptor;
+        return controllerActionDescriptor != null && auditingHelper.ShouldSaveAudit(controllerActionDescriptor.MethodInfo);
     }
 }

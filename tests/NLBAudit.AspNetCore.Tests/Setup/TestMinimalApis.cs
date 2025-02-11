@@ -1,19 +1,19 @@
 using NLBAudit.AspNetCore.MinimalApis;
 
-namespace NLBAudit.Sample;
+namespace NLBAudit.AspNetCore.Tests.Setup;
 
-public static class MinimalApis
+public static class TestMinimalApis
 {
-    public static void Configure(WebApplication app)
+    public static void ConfigureTestMinimalApi(this IEndpointRouteBuilder app)
     {
         var summaries = new[]
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+            "Freezing", "Bracing"
         };
 
         app.MapGet("/weatherforecast", (string testInfo) =>
            {
-               var forecast = Enumerable.Range(1, 5).Select(index =>
+               var forecast = Enumerable.Range(1, 2).Select(index =>
                                             new WeatherForecast
                                             (
                                                 DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
@@ -24,14 +24,7 @@ public static class MinimalApis
                                         .ToArray();
                return forecast;
            })
-           .AddEndpointFilter<MinimalApiEndpointAuditFilter<int>>()
-           .WithOpenApi();
-        
-        app.MapPost("/weatherforecast", (WeatherForecast weatherForecast) => weatherForecast)
-           .AddEndpointFilter<MinimalApiEndpointAuditFilter<int>>()
-           .WithOpenApi();
-
-        app.Run();
+           .AddEndpointFilter<MinimalApiEndpointAuditFilter<int>>();
     }
 }
 

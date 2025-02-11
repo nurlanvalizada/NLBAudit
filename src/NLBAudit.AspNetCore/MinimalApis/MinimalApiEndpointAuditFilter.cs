@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
+using NLBAudit.AspNetCore.Extensions;
 using NLBAudit.Core;
 
 namespace NLBAudit.AspNetCore.MinimalApis;
@@ -20,11 +21,13 @@ public class MinimalApiEndpointAuditFilter<TUserId>(IAuditingHelper<TUserId> aud
             return await next(context);
         }
 
-        var routeName = endpoint.DisplayName ?? "MinimalAPI Route";
+        //var routeName = endpoint.DisplayName ?? "MinimalAPI Route";
         var methodInfo = endpoint.Metadata.GetMetadata<MethodInfo>();
         var controllerType = methodInfo?.DeclaringType;
         
         var auditInfo = auditingHelper.CreateAuditInfo(
+            context.HttpContext.GetFullUrl(),
+            context.HttpContext.Request.Method,
             controllerType,
             methodInfo,
             context.Arguments.ToArray()
@@ -46,9 +49,9 @@ public class MinimalApiEndpointAuditFilter<TUserId>(IAuditingHelper<TUserId> aud
             stopwatch.Stop();
             auditInfo.Duration = Convert.ToInt32(stopwatch.Elapsed.TotalMilliseconds);
             
-            if (result != null)
+            if (configuration.SaveReturnValues && result != null)
             {
-               auditInfo.ReturnValue = JsonSerializer.Serialize(result);
+                auditInfo.ReturnValue = JsonSerializer.Serialize(result);
             }
 
             var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -60,19 +63,8 @@ public class MinimalApiEndpointAuditFilter<TUserId>(IAuditingHelper<TUserId> aud
 
     private bool ShouldSaveAudit(EndpointFilterInvocationContext context)
     {
-        if(!configuration.IsEnabled)
-            return false;
-        
         var endpoint = context.HttpContext.GetEndpoint();
-        if(endpoint is not null)
-        {
-            var methodInfo = endpoint.Metadata.OfType<MethodInfo>().FirstOrDefault();
-            if(methodInfo is not null)
-            {
-                return auditingHelper.ShouldSaveAudit(methodInfo);
-            }
-        }
-        
-        return false;
+        var methodInfo = endpoint?.Metadata.OfType<MethodInfo>().FirstOrDefault();
+        return methodInfo != null && auditingHelper.ShouldSaveAudit(methodInfo, true);
     }
 }

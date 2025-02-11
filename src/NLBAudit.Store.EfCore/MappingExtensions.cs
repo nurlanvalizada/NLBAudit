@@ -9,6 +9,8 @@ internal static class MappingExtensions
         return new AuditLogEntity<TUserId>
         {
             UserId = auditInfo.UserId,
+            Path = auditInfo.Path,
+            HttpMethod = auditInfo.HttpMethod,
             ServiceName = auditInfo.ServiceName,
             MethodName = auditInfo.MethodName,
             InputObj = auditInfo.InputObj,
@@ -16,7 +18,6 @@ internal static class MappingExtensions
             CreationTime = auditInfo.CreationTime,
             Duration = auditInfo.Duration,
             Exception = auditInfo.Exception?.ToString(),
-            CustomData = auditInfo.CustomData,
             BrowserInfo = auditInfo.BrowserInfo,
             ClientIpAddress = auditInfo.ClientIpAddress
         };

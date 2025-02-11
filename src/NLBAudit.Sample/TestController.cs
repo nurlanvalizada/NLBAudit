@@ -7,15 +7,21 @@ namespace NLBAudit.Sample;
 public class TestController : Controller
 {
     [HttpGet]
-    public async Task<object> GetTest()
+    public async Task<object> GetTest(string name)
     {
-        return Task.FromResult(new { Test = "Test" });
+        await Task.Delay(100);
+        return new
+        {
+            Test = "Test",
+            Name = name
+        };
     }
     
     [HttpPost]
     public async Task<object> PostTest([FromBody] PostModel model)
     {
-        return Task.FromResult(new { Test = "Test" });
+        await Task.Delay(100);
+        return new { Test = "Test" };
     }
 }
 
