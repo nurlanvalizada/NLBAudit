@@ -1,0 +1,35 @@
+name: Publish NuGet Packages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+          source-url: https://api.nuget.org/v3/index.json
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build and Pack NLBAudit.Core
+        run: dotnet pack ./src/NLBAudit.Core/NLBAudit.Core.csproj --configuration Release --output ./nupkgs
+
+      - name: Build and Pack Project 2
+        run: dotnet pack ./src/NLBAudit.Store.EfCore/NLBAudit.Store.EfCore.csproj --configuration Release --output ./nupkgs
+
+      - name: Build and Pack Project 3
+        run: dotnet pack ./src/NLBAudit.AspNetCore/NLBAudit.AspNetCore.csproj --configuration Release --output ./nupkgs
+
+      - name: Publish NuGet Packages
+        run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
