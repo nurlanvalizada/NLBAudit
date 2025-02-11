@@ -30,12 +30,12 @@ jobs:
           dotnet build ./src/NLBAudit.Core/NLBAudit.Core.csproj --configuration Release
           dotnet pack ./src/NLBAudit.Core/NLBAudit.Core.csproj --configuration Release --output ./nupkgs
 
-      - name: Build and Pack Project 2
+      - name: Build and Pack NLBAudit.Store.EfCore
         run: |
           dotnet build ./src/NLBAudit.Store.EfCore/NLBAudit.Store.EfCore.csproj --configuration Release
           dotnet pack ./src/NLBAudit.Store.EfCore/NLBAudit.Store.EfCore.csproj --configuration Release --output ./nupkgs
 
-      - name: Build and Pack Project 3
+      - name: Build and Pack NLBAudit.AspNetCore
         run: |
           dotnet build ./src/NLBAudit.AspNetCore/NLBAudit.AspNetCore.csproj --configuration Release
           dotnet pack ./src/NLBAudit.AspNetCore/NLBAudit.AspNetCore.csproj --configuration Release --output ./nupkgs
