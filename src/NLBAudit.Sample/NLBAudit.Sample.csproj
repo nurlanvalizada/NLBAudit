@@ -18,12 +18,9 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="NLBAudit.AspNetCore" Version="2.0.0" />
+        <PackageReference Include="NLBAudit.Store.EfCore" Version="2.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\NLBAudit.AspNetCore\NLBAudit.AspNetCore.csproj" />
-      <ProjectReference Include="..\NLBAudit.Store.EfCore\NLBAudit.Store.EfCore.csproj" />
     </ItemGroup>
 
 </Project>
