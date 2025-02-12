@@ -3,9 +3,9 @@ using NLBAudit.Store.EfCore.Extensions;
 
 namespace NLBAudit.Store.EfCore.IntegrationTests.Setup;
 
-public class TestAuditedContext(DbContextOptions<TestAuditedContext> options) : DbContext(options), IAuditedContext<int>
+public class TestAuditedContext(DbContextOptions<TestAuditedContext> options) : DbContext(options), IAuditedContext
 {
-    public DbSet<AuditLogEntity<int>> AuditLogs { get; set; }
+    public DbSet<AuditLogEntity> AuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

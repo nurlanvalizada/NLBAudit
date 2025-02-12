@@ -4,8 +4,8 @@ namespace NLBAudit.AspNetCore.Mvc.Extensions;
 
 public static class McOptionsExtensions
 {
-    public static void AddAuditingFilter<TUserId>(this MvcOptions options)
+    public static void AddAuditingFilter(this MvcOptions options)
     {
-        options.Filters.Add(typeof(MvcAuditActionFilter<TUserId>));
+        options.Filters.Add(typeof(MvcAuditActionFilter));
     }
 }

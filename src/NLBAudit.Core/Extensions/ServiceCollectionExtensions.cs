@@ -13,9 +13,9 @@ public static class ServiceCollectionExtensions
             return conf;
         });
         
-        services.AddSingleton<IAuditingStore<TUserId>, LogAuditingStore<TUserId>>();
+        services.AddSingleton<IAuditingStore, LogAuditingStore>();
         services.AddSingleton<ICallerPartyInfoProvider, TestCallerPartyInfoProvider>();
-        services.AddSingleton<IAuthorizationInfoProvider<TUserId>, TestAuthorizationInfoProvider<TUserId>>();
-        services.AddScoped<IAuditingHelper<TUserId>, AuditingHelper<TUserId>>();
+        services.AddSingleton<IAuthorizationInfoProvider, TestAuthorizationInfoProvider>();
+        services.AddScoped<IAuditingHelper, AuditingHelper>();
     }
 }

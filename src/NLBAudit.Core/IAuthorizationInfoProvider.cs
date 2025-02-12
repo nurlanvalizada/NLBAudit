@@ -1,8 +1,8 @@
 namespace NLBAudit.Core;
 
-public interface IAuthorizationInfoProvider<out TUserId>
+public interface IAuthorizationInfoProvider
 {
     bool IsAuthenticated();
     
-    TUserId? GetUserId();
+    string? GetUserName();
 }

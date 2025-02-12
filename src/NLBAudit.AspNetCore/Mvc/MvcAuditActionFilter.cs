@@ -8,10 +8,9 @@ using NLBAudit.Core;
 
 namespace NLBAudit.AspNetCore.Mvc;
 
-public class MvcAuditActionFilter<TUserId>(
-    AuditingConfiguration configuration,
-    IAuditingHelper<TUserId> auditingHelper)
-    : IAsyncActionFilter
+public class MvcAuditActionFilter(IAuditingHelper auditingHelper,
+                                  IServiceScopeFactory serviceScopeFactory,
+                                  AuditingConfiguration configuration) : IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
@@ -72,9 +71,15 @@ public class MvcAuditActionFilter<TUserId>(
                         break;
                 }
             }
+            
+            _ = Task.Run(async () =>
+            {
+                using var scope = serviceScopeFactory.CreateScope();
+                var auditingStore = scope.ServiceProvider.GetRequiredService<IAuditingStore>();
 
-            var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-            await auditingHelper.SaveAsync(auditInfo, cancellationTokenSource.Token);
+                var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+                await auditingStore.SaveAsync(auditInfo, cancellationTokenSource.Token);
+            });
         }
     }
 

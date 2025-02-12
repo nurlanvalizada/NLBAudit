@@ -24,7 +24,7 @@ public static class TestMinimalApis
                                         .ToArray();
                return forecast;
            })
-           .AddEndpointFilter<MinimalApiEndpointAuditFilter<int>>();
+           .AddEndpointFilter<MinimalApiEndpointAuditFilter>();
     }
 }
 

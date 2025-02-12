@@ -1,19 +1,14 @@
 namespace NLBAudit.Core;
 
-internal class TestAuthorizationInfoProvider<TUserId> : IAuthorizationInfoProvider<TUserId>
+internal class TestAuthorizationInfoProvider : IAuthorizationInfoProvider
 {
     public bool IsAuthenticated()
     {
         return true;
     }
 
-    public TUserId? GetUserId()
+    public string? GetUserName()
     {
-        if(typeof(TUserId) == typeof(int))
-        {
-            return (TUserId)(object)1;
-        }
-
-        return default;
+        return "test";
     }
 }

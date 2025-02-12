@@ -5,13 +5,13 @@ using NLBAudit.Core.Attributes;
 
 namespace NLBAudit.Core;
 
-public class AuditingHelper<TUserId>(
-    ILogger<AuditingHelper<TUserId>> logger,
-    IAuthorizationInfoProvider<TUserId> authorizationInfoProvider,
-    IAuditingStore<TUserId> auditingStore,
+public class AuditingHelper(
+    ILogger<AuditingHelper> logger,
+    IAuthorizationInfoProvider authorizationInfoProvider,
+    IAuditingStore auditingStore,
     ICallerPartyInfoProvider callerPartyInfoProvider,
     AuditingConfiguration configuration)
-    : IAuditingHelper<TUserId>
+    : IAuditingHelper
 {
     public bool ShouldSaveAudit(MethodInfo? methodInfo, bool allowInternalMethods = false)
     {
@@ -60,17 +60,17 @@ public class AuditingHelper<TUserId>(
         return true;
     }
 
-    public AuditInfo<TUserId> CreateAuditInfo(string path, string httpMethod, Type type, MethodInfo method, object[] arguments)
+    public AuditInfo CreateAuditInfo(string path, string httpMethod, Type type, MethodInfo method, object[] arguments)
     {
         return CreateAuditInfo(path, httpMethod, type, method, CreateArgumentsDictionary(method, arguments));
     }
 
-    public AuditInfo<TUserId> CreateAuditInfo(string path, string httpMethod, Type type, MethodInfo method, IDictionary<string, object?> arguments)
+    public AuditInfo CreateAuditInfo(string path, string httpMethod, Type type, MethodInfo method, IDictionary<string, object?> arguments)
     {
         var correctedArguments = CorrectArguments(method, arguments);
-        var auditInfo = new AuditInfo<TUserId>
+        var auditInfo = new AuditInfo
         {
-            UserId = authorizationInfoProvider.GetUserId(),
+            UserName = authorizationInfoProvider.GetUserName(),
             Path = path,
             HttpMethod = httpMethod,
             ServiceName = type.FullName ?? type.Name,
@@ -84,7 +84,7 @@ public class AuditingHelper<TUserId>(
         return auditInfo;
     }
 
-    public async Task SaveAsync(AuditInfo<TUserId> auditInfo, CancellationToken cancellationToken)
+    public async Task SaveAsync(AuditInfo auditInfo, CancellationToken cancellationToken)
     {
         await auditingStore.SaveAsync(auditInfo, cancellationToken);
     }

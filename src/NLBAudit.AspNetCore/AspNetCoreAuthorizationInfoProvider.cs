@@ -2,8 +2,7 @@ using NLBAudit.Core;
 
 namespace NLBAudit.AspNetCore;
 
-public class AspNetCoreAuthorizationInfoProvider<TUserId>(IHttpContextAccessor httpContextAccessor)
-    : IAuthorizationInfoProvider<TUserId>
+public class AspNetCoreAuthorizationInfoProvider(IHttpContextAccessor httpContextAccessor) : IAuthorizationInfoProvider
 {
     public bool IsAuthenticated()
     {
@@ -11,16 +10,16 @@ public class AspNetCoreAuthorizationInfoProvider<TUserId>(IHttpContextAccessor h
         return isAuthenticated;
     }
 
-    public TUserId? GetUserId()
+    public string? GetUserName()
     {
-        TUserId? userId = default;
-        var subClaim = httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == "sub");
+        string? userId = null;
+        var subClaim = httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type is "username" or "email");
 
         if(subClaim != null)
         {
-            userId = (TUserId)Convert.ChangeType(subClaim.Value, typeof(TUserId));
+            userId = subClaim.Value;
         }
-        
+
         return userId;
     }
 }
