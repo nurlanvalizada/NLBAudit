@@ -8,11 +8,11 @@
         <Company>nurlanvalizada.com</Company>
         <RepositoryUrl>https://github.com/nurlanvalizada/NLBAudit</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageReadmeFile>..\..\README.md</PackageReadmeFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
-      <None Include="..\..\README.md" Pack="true" PackagePath="..\..\" />
+      <None Include="..\..\README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>
