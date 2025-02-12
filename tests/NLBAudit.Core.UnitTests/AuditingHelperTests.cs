@@ -8,17 +8,17 @@ namespace NLBAudit.Core.UnitTests;
 
 public class AuditingHelperTests
 {
-    private readonly ILogger<AuditingHelper<int>> _logger;
-    private readonly IAuthorizationInfoProvider<int> _authorizationInfoProvider;
-    private readonly IAuditingStore<int> _auditingStore;
+    private readonly ILogger<AuditingHelper> _logger;
+    private readonly IAuthorizationInfoProvider _authorizationInfoProvider;
+    private readonly IAuditingStore _auditingStore;
     private readonly ICallerPartyInfoProvider _callerPartyInfoProvider;
     private readonly AuditingConfiguration _configuration;
 
     public AuditingHelperTests()
     {
-        _logger = Substitute.For<ILogger<AuditingHelper<int>>>();
-        _authorizationInfoProvider = Substitute.For<IAuthorizationInfoProvider<int>>();
-        _auditingStore = Substitute.For<IAuditingStore<int>>();
+        _logger = Substitute.For<ILogger<AuditingHelper>>();
+        _authorizationInfoProvider = Substitute.For<IAuthorizationInfoProvider>();
+        _auditingStore = Substitute.For<IAuditingStore>();
         _callerPartyInfoProvider = Substitute.For<ICallerPartyInfoProvider>();
 
         // Default configuration for tests.
@@ -35,9 +35,9 @@ public class AuditingHelperTests
         _callerPartyInfoProvider.BrowserInfo.Returns("UnitTestBrowser");
     }
 
-    private AuditingHelper<int> CreateHelper()
+    private AuditingHelper CreateHelper()
     {
-        return new AuditingHelper<int>(_logger, _authorizationInfoProvider, _auditingStore, _callerPartyInfoProvider, _configuration);
+        return new AuditingHelper(_logger, _authorizationInfoProvider, _auditingStore, _callerPartyInfoProvider, _configuration);
     }
 
     #region ShouldSaveAudit Tests
@@ -178,8 +178,8 @@ public class AuditingHelperTests
     public void CreateAuditInfo_SetsPropertiesCorrectly_WithArgumentsArray()
     {
         // Arrange
-        int expectedUserId = 42;
-        _authorizationInfoProvider.GetUserId().Returns(expectedUserId);
+        string expectedUserName = "test";
+        _authorizationInfoProvider.GetUserName().Returns(expectedUserName);
 
         var helper = CreateHelper();
         var method = typeof(ClassWithVariousMethods).GetMethod(nameof(ClassWithVariousMethods.MethodWithParametersAndReturnValue));
@@ -189,7 +189,7 @@ public class AuditingHelperTests
         var auditInfo = helper.CreateAuditInfo("/test", "GET", typeof(ClassWithVariousMethods), method, args);
 
         // Assert
-        Assert.Equal(expectedUserId, auditInfo.UserId);
+        Assert.Equal(expectedUserName, auditInfo.UserName);
         Assert.Equal(typeof(ClassWithVariousMethods).FullName, (string?)auditInfo.ServiceName);
         Assert.Equal(method.Name, (string?)auditInfo.MethodName);
         var deserialized = JsonSerializer.Deserialize<Dictionary<string, object>>(auditInfo.InputObj);
@@ -201,8 +201,8 @@ public class AuditingHelperTests
     public void CreateAuditInfo_SetsPropertiesCorrectly_WithArgumentsDictionary_AndHandlesIgnoredTypes()
     {
         // Arrange
-        int expectedUserId = 100;
-        _authorizationInfoProvider.GetUserId().Returns(expectedUserId);
+        string expectedUserName = "test";
+        _authorizationInfoProvider.GetUserName().Returns(expectedUserName);
 
         // Configure an ignored type (for example, DateTime)
         _configuration.IgnoredTypes.Add(typeof(DateTime));
@@ -219,7 +219,7 @@ public class AuditingHelperTests
         var auditInfo = helper.CreateAuditInfo("/test", "GET", typeof(ClassWithVariousMethods), method, arguments);
 
         // Assert
-        Assert.Equal(expectedUserId, auditInfo.UserId);
+        Assert.Equal(expectedUserName, auditInfo.UserName);
         Assert.Equal(typeof(ClassWithVariousMethods).FullName, (string?)auditInfo.ServiceName);
         Assert.Equal(method.Name, (string?)auditInfo.MethodName);
 
@@ -239,9 +239,9 @@ public class AuditingHelperTests
     {
         // Arrange
         var helper = CreateHelper();
-        var auditInfo = new AuditInfo<int>
+        var auditInfo = new AuditInfo
         {
-            UserId = 1,
+            UserName = "test",
             Path = "/test",
             HttpMethod = "GET",
             ServiceName = "TestService",

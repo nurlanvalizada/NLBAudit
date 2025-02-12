@@ -22,7 +22,7 @@ public class TestStartup
         
         services.AddControllers(options =>
         {
-            options.AddAuditingFilter<int>();
+            options.AddAuditingFilter();
         });
     }
 

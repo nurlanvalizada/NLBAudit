@@ -24,11 +24,11 @@ public static class MinimalApis
                                         .ToArray();
                return forecast;
            })
-           .AddEndpointFilter<MinimalApiEndpointAuditFilter<int>>()
+           .AddEndpointFilter<MinimalApiEndpointAuditFilter>()
            .WithOpenApi();
         
         app.MapPost("/weatherforecast", (WeatherForecast weatherForecast) => weatherForecast)
-           .AddEndpointFilter<MinimalApiEndpointAuditFilter<int>>()
+           .AddEndpointFilter<MinimalApiEndpointAuditFilter>()
            .WithOpenApi();
 
         app.Run();

@@ -6,25 +6,27 @@ using NLBAudit.Core;
 
 namespace NLBAudit.AspNetCore.MinimalApis;
 
-public class MinimalApiEndpointAuditFilter<TUserId>(IAuditingHelper<TUserId> auditingHelper, AuditingConfiguration configuration) : IEndpointFilter
+public class MinimalApiEndpointAuditFilter(
+    IAuditingHelper auditingHelper,
+    IServiceScopeFactory serviceScopeFactory,
+    AuditingConfiguration configuration) : IEndpointFilter
 {
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
-        if (!ShouldSaveAudit(context))
+        if(!ShouldSaveAudit(context))
         {
             return await next(context);
         }
-        
+
         var endpoint = context.HttpContext.GetEndpoint();
         if(endpoint is null)
         {
             return await next(context);
         }
 
-        //var routeName = endpoint.DisplayName ?? "MinimalAPI Route";
-        var methodInfo = endpoint.Metadata.GetMetadata<MethodInfo>();
+        var methodInfo = GetHandlerMethod(endpoint);
         var controllerType = methodInfo?.DeclaringType;
-        
+
         var auditInfo = auditingHelper.CreateAuditInfo(
             context.HttpContext.GetFullUrl(),
             context.HttpContext.Request.Method,
@@ -40,7 +42,7 @@ public class MinimalApiEndpointAuditFilter<TUserId>(IAuditingHelper<TUserId> aud
         {
             result = await next(context);
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             auditInfo.Exception = ex;
         }
@@ -48,14 +50,20 @@ public class MinimalApiEndpointAuditFilter<TUserId>(IAuditingHelper<TUserId> aud
         {
             stopwatch.Stop();
             auditInfo.Duration = Convert.ToInt32(stopwatch.Elapsed.TotalMilliseconds);
-            
-            if (configuration.SaveReturnValues && result != null)
+
+            if(configuration.SaveReturnValues && result != null)
             {
                 auditInfo.ReturnValue = JsonSerializer.Serialize(result);
             }
 
-            var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-            await auditingHelper.SaveAsync(auditInfo, cancellationTokenSource.Token);
+            _ = Task.Run(async () =>
+            {
+                using var scope = serviceScopeFactory.CreateScope();
+                var auditingStore = scope.ServiceProvider.GetRequiredService<IAuditingStore>();
+
+                var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+                await auditingStore.SaveAsync(auditInfo, cancellationTokenSource.Token);
+            });
         }
 
         return result;
@@ -66,5 +74,18 @@ public class MinimalApiEndpointAuditFilter<TUserId>(IAuditingHelper<TUserId> aud
         var endpoint = context.HttpContext.GetEndpoint();
         var methodInfo = endpoint?.Metadata.OfType<MethodInfo>().FirstOrDefault();
         return methodInfo != null && auditingHelper.ShouldSaveAudit(methodInfo, true);
+    }
+
+    private static MethodInfo? GetHandlerMethod(Endpoint endpoint)
+    {
+        var methodInfo = endpoint.Metadata.GetMetadata<MethodInfo>();
+        if(methodInfo != null)
+        {
+            return methodInfo;
+        }
+
+        var requestDelegate = endpoint.RequestDelegate;
+        var target = requestDelegate?.Target;
+        return target?.GetType().GetMethod("Invoke");
     }
 }

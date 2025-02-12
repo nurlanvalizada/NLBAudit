@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.EntityFrameworkCore;
+using NLBAudit.AspNetCore.Controllers;
 using NLBAudit.AspNetCore.Extensions;
 using NLBAudit.AspNetCore.Mvc.Extensions;
 using NLBAudit.Sample;
@@ -21,11 +23,11 @@ builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectionString"));
 });
 
-builder.Services.ConfigureAuditingEfCoreStore<int, MyDbContext>();
+builder.Services.ConfigureAuditingEfCoreStore<MyDbContext>();
 builder.Services.AddControllers(options =>
 {
-    options.AddAuditingFilter<int>();
-});
+    options.AddAuditingFilter();
+}).PartManager.ApplicationParts.Add(new AssemblyPart(typeof(AuditLogController).Assembly));
 
 var app = builder.Build();
 

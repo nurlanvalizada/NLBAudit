@@ -10,12 +10,12 @@ public class AspNetCoreAuthorizationInfoProviderTests
     {
         // Arrange
         var context = new DefaultHttpContext();
-        var identity = new ClaimsIdentity([new Claim("sub", "1")], "TestAuth");
+        var identity = new ClaimsIdentity([new Claim("sub", "1"), new Claim("username", "nurlan")], "TestAuth");
         context.User = new ClaimsPrincipal(identity);
         var httpContextAccessor = Substitute.For<IHttpContextAccessor>();
         httpContextAccessor.HttpContext.Returns(context);
 
-        var provider = new AspNetCoreAuthorizationInfoProvider<int>(httpContextAccessor);
+        var provider = new AspNetCoreAuthorizationInfoProvider(httpContextAccessor);
 
         // Act
         bool isAuthenticated = provider.IsAuthenticated();
@@ -32,7 +32,7 @@ public class AspNetCoreAuthorizationInfoProviderTests
         var httpContextAccessor = Substitute.For<IHttpContextAccessor>();
         httpContextAccessor.HttpContext.Returns(context);
 
-        var provider = new AspNetCoreAuthorizationInfoProvider<int>(httpContextAccessor);
+        var provider = new AspNetCoreAuthorizationInfoProvider(httpContextAccessor);
 
         // Act
         bool isAuthenticated = provider.IsAuthenticated();
@@ -42,26 +42,26 @@ public class AspNetCoreAuthorizationInfoProviderTests
     }
 
     [Fact]
-    public void GetUserId_ReturnsCorrectUserId_WhenSubClaimExists()
+    public void GetUserName_ReturnsCorrectUserName_WhenSubClaimExists()
     {
         // Arrange
         var context = new DefaultHttpContext();
-        var identity = new ClaimsIdentity([new Claim("sub", "42")], "TestAuth");
+        var identity = new ClaimsIdentity([new Claim("sub", "42"), new Claim("username", "nurlan")], "TestAuth");
         context.User = new ClaimsPrincipal(identity);
         var httpContextAccessor = Substitute.For<IHttpContextAccessor>();
         httpContextAccessor.HttpContext.Returns(context);
 
-        var provider = new AspNetCoreAuthorizationInfoProvider<int>(httpContextAccessor);
+        var provider = new AspNetCoreAuthorizationInfoProvider(httpContextAccessor);
 
         // Act
-        int? userId = provider.GetUserId();
+        var userName = provider.GetUserName();
 
         // Assert
-        Assert.Equal(42, userId);
+        Assert.Equal("nurlan", userName);
     }
     
     [Fact]
-    public void GetUserId_ReturnsZero_WhenSubClaimNotExists()
+    public void GetUserId_ReturnsNull_WhenSubClaimNotExists()
     {
         // Arrange
         var context = new DefaultHttpContext();
@@ -70,12 +70,12 @@ public class AspNetCoreAuthorizationInfoProviderTests
         var httpContextAccessor = Substitute.For<IHttpContextAccessor>();
         httpContextAccessor.HttpContext.Returns(context);
 
-        var provider = new AspNetCoreAuthorizationInfoProvider<int>(httpContextAccessor);
+        var provider = new AspNetCoreAuthorizationInfoProvider(httpContextAccessor);
 
         // Act
-        int? userId = provider.GetUserId();
+        var userName = provider.GetUserName();
 
         // Assert
-        Assert.Equal(0, userId);
+        Assert.Null(userName);
     }
 }

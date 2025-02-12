@@ -6,9 +6,10 @@ public static class EfCoreModelBuilderExtensions
 {
     public static void ConfigureEfCoreAuditing<TUserId>(this ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AuditLogEntity<TUserId>>(b =>
+        modelBuilder.Entity<AuditLogEntity>(b =>
         {
             b.HasKey(x => x.Id);
+            b.Property(x => x.UserName).HasMaxLength(256);
             b.Property(x => x.Path).HasMaxLength(1000).IsRequired();
             b.Property(x => x.HttpMethod).HasMaxLength(20).IsRequired();
             b.Property(x => x.ServiceName).HasMaxLength(256).IsRequired();

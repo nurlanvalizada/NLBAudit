@@ -2,13 +2,13 @@ using Microsoft.Extensions.Logging;
 
 namespace NLBAudit.Core;
 
-internal class LogAuditingStore<TUserId>(ILogger<LogAuditingStore<TUserId>> logger) : IAuditingStore<TUserId>
+internal class LogAuditingStore(ILogger<LogAuditingStore> logger) : IAuditingStore
 {
-    public AuditInfo<TUserId>? LastAuditInfo { get; private set; }
-    
-    public Task SaveAsync(AuditInfo<TUserId> auditInfo, CancellationToken cancellationToken)
+    public AuditInfo? LastAuditInfo { get; private set; }
+
+    public Task SaveAsync(AuditInfo auditInfo, CancellationToken cancellationToken)
     {
-        if (auditInfo.Exception == null)
+        if(auditInfo.Exception == null)
         {
             logger.LogInformation(auditInfo.ToString());
         }
@@ -19,5 +19,13 @@ internal class LogAuditingStore<TUserId>(ILogger<LogAuditingStore<TUserId>> logg
 
         LastAuditInfo = auditInfo;
         return Task.CompletedTask;
+    }
+
+    public async Task<IReadOnlyDictionary<long, AuditInfo>> FilterAsync(DateTime startDate, DateTime endDate, string? path, bool? hasException,
+                                                                        int? minExecutionDuration, int? maxExecutionDuration, int skipCount, int maxResultCount,
+                                                                        CancellationToken cancellationToken)
+    {
+        await Task.Delay(100, cancellationToken);
+        return new Dictionary<long, AuditInfo>();
     }
 }

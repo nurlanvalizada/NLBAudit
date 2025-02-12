@@ -14,10 +14,10 @@ public class EfCoreAuditingStoreIntegrationTests
         
         await using (var context = new TestAuditedContext(options))
         {
-            var auditingStore = new EfCoreAuditingStore<int>(context);
-            var auditInfo = new AuditInfo<int>
+            var auditingStore = new EfCoreAuditingStore(context);
+            var auditInfo = new AuditInfo
             {
-                UserId = 1,
+                UserName = "test",
                 Path = "/test", 
                 HttpMethod = "POST",
                 ServiceName = "TestService",
@@ -42,7 +42,7 @@ public class EfCoreAuditingStoreIntegrationTests
 
             var savedEntity = await verificationContext.AuditLogs.FirstOrDefaultAsync();
             Assert.NotNull(savedEntity);
-            Assert.Equal(1, savedEntity.UserId);
+            Assert.Equal("test", savedEntity.UserName);
             Assert.Equal("TestService", savedEntity.ServiceName);
             Assert.Equal("TestMethod", savedEntity.MethodName);
             Assert.Equal("{\"param\":\"value\"}", savedEntity.InputObj);

@@ -1,8 +1,8 @@
 namespace NLBAudit.Core;
 
-public class AuditInfo<TUserId>
+public class AuditInfo
 {
-    public TUserId? UserId { get; set; }
+    public string? UserName { get; set; }
     
     public required string Path { get; set; }
     
@@ -31,8 +31,8 @@ public class AuditInfo<TUserId>
 
     public override string ToString()
     {
-        var loggedUserId = UserId is not null
-            ? "user: " + UserId
+        var loggedUserId = UserName is not null
+            ? "user: " + UserName
             : "an anonymous user";
 
         var exceptionOrSuccessMessage = Exception != null

@@ -4,13 +4,13 @@ using NLBAudit.Store.EfCore.Extensions;
 
 namespace NLBAudit.Sample;
 
-public class MyDbContext(DbContextOptions<MyDbContext> options) : DbContext(options), IAuditedContext<int>
+public class MyDbContext(DbContextOptions<MyDbContext> options) : DbContext(options), IAuditedContext
 {
-    public DbSet<AuditLogEntity<int>> AuditLogs { get; set; }
+    public DbSet<AuditLogEntity> AuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ConfigureEfCoreAuditing<int>();
-        modelBuilder.Entity<AuditLogEntity<int>>().ToTable("AuditLogs");
+        modelBuilder.Entity<AuditLogEntity>().ToTable("AuditLogs");
     }
 }

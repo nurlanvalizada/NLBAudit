@@ -11,6 +11,6 @@ public static class ServiceCollectionExtensions
         services.ConfigureCoreAuditing<TUserId>(action);
 
         services.Replace(ServiceDescriptor.Singleton<ICallerPartyInfoProvider, AspNetCoreCallerPartyInfoProvider>());
-        services.Replace(ServiceDescriptor.Singleton<IAuthorizationInfoProvider<TUserId>, AspNetCoreAuthorizationInfoProvider<TUserId>>());
+        services.Replace(ServiceDescriptor.Singleton<IAuthorizationInfoProvider, AspNetCoreAuthorizationInfoProvider>());
     }
 }

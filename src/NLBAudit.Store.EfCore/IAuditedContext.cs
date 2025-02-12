@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace NLBAudit.Store.EfCore;
 
-public interface IAuditedContext<TUserId>
+public interface IAuditedContext
 {
-    public DbSet<AuditLogEntity<TUserId>> AuditLogs { get; set; }
+    public DbSet<AuditLogEntity> AuditLogs { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

@@ -14,12 +14,12 @@ public class AuditIntegrationTests(TestApplicationFactory factory) : IClassFixtu
         HttpResponseMessage response = await client.GetAsync($"/api/test/{testId}");
         response.EnsureSuccessStatusCode();
         
-        var auditingStore = factory.Services.GetRequiredService<IAuditingStore<int>>() as LogAuditingStore<int>;
+        var auditingStore = factory.Services.GetRequiredService<IAuditingStore>() as LogAuditingStore;
         Assert.NotNull(auditingStore);
         Assert.NotNull(auditingStore.LastAuditInfo);
         
-        AuditInfo<int> auditInfo = auditingStore.LastAuditInfo!;
-        Assert.Equal(1, auditInfo.UserId);
+        AuditInfo auditInfo = auditingStore.LastAuditInfo!;
+        Assert.Equal("test", auditInfo.UserName);
         
         Assert.Contains("TestController", auditInfo.ServiceName);
         Assert.Equal("GetTest", auditInfo.MethodName);
@@ -36,12 +36,12 @@ public class AuditIntegrationTests(TestApplicationFactory factory) : IClassFixtu
         HttpResponseMessage response = await client.GetAsync("/weatherforecast?testInfo=" + testData);
         response.EnsureSuccessStatusCode();
         
-        var auditingStore = factory.Services.GetRequiredService<IAuditingStore<int>>() as LogAuditingStore<int>;
+        var auditingStore = factory.Services.GetRequiredService<IAuditingStore>() as LogAuditingStore;
         Assert.NotNull(auditingStore);
         Assert.NotNull(auditingStore.LastAuditInfo);
         
-        AuditInfo<int> auditInfo = auditingStore.LastAuditInfo!;
-        Assert.Equal(1, auditInfo.UserId);
+        AuditInfo auditInfo = auditingStore.LastAuditInfo!;
+        Assert.Equal("test", auditInfo.UserName);
         
         Assert.Contains("TestMinimalApis", auditInfo.ServiceName);
         Assert.Contains("ConfigureTestMinimalApi", auditInfo.MethodName);
