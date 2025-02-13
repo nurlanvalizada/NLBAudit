@@ -106,7 +106,7 @@ dotnet add package NLBAudit.Store.EfCore
 This is all you need :) 
 
 ### Customization
-You can customize the audit logging by extending the AuditInfo class or implementing your own storage mechanism by extending IAuditingStore.  
+You can customize the audit logging by implementing your own storage mechanism by extending IAuditingStore or integrate it with different frameworks.  
 
 ### Contributing
 Contributions are welcome! Please open an issue or submit a pull request on GitHub.  
